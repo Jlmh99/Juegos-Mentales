@@ -1,0 +1,41 @@
+<div class="container">
+  
+  
+  <h1>🧠 Juegos Mentales</h1>
+  <p class="subtitle">Explora, aprende y entrena tu mente</p>
+
+  <div class="menu">
+    <a class="card"
+       href="https://es.wikipedia.org/wiki/Sudoku"
+       target="_blank"
+       rel="noopener">
+      ♟️ ¿Qué es el Sudoku?
+    </a>
+
+    <a class="card"
+       href="https://es.wikipedia.org/wiki/Crucigrama"
+       target="_blank"
+       rel="noopener">
+      🧩 ¿Qué es un Crucigrama?
+    </a>
+  </div>
+
+  <!-- 🔍 Buscador de juegos -->
+  <input
+    type="text"
+    placeholder="Buscar juego..."
+    (input)="searchText.set($any($event.target).value)"
+    class="search"
+  />
+
+  <div class="menu">
+    <div *ngFor="let juego of juegosFiltrados()" class="card">
+      <h3>{{ juego.nombre }}</h3>
+      <p>{{ juego.descripcion }}</p>
+    </div>
+  </div>
+  
+
+  <p>{{ mensajeBackend() }}</p>
+  
+</div>
