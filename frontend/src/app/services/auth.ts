@@ -15,7 +15,7 @@ export class AuthService {
   test():Observable<string> {
     // 1. Crea las credenciales (user:contraseña_de_consola)
     // Nota: Sustituye 'tu_password_aqui' por el que sale en tu consola de Spring
-    const authHeader = 'Basic ' + btoa('user:309e85c2-d442-4a70-99ac-d292be4ad110');
+    const authHeader = 'Basic ' + btoa('user:5bf94bc5-175e-4783-b808-bd132bbcc69a');
     const headers = new HttpHeaders({
       'Authorization': authHeader
     });
