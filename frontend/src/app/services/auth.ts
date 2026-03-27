@@ -32,16 +32,26 @@ export class AuthService {
   }
 
   // Método de Login (Ahora igual que register)
-  login(data: any): Observable<string> {
-    return this.http.post(this.urlLogin, data, {
-      responseType: 'text' // 👈 Importante porque recibes texto del Backend
-    });
+  login(data: any): Observable<any> {
+    return this.http.post(this.urlLogin, data);
   }
 
   verify(data: any): Observable<string> {
     return this.http.post(this.urlVerify, data, {
       responseType: 'text' // 👈 Mantiene la consistencia con tus otros métodos
     });
+  }
+
+  getUsers() {
+    return this.http.get<any[]>('http://localhost:8080/api/users');
+  }
+
+  deleteUser(id: number) {
+    return this.http.delete(`http://localhost:8080/api/users/${id}`);
+  }
+
+  createUser(user: any) {
+    return this.http.post('http://localhost:8080/api/users', user);
   }
 
 }

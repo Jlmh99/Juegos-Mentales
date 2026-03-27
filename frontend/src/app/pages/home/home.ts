@@ -1,16 +1,19 @@
-import { CommonModule } from '@angular/common';
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, computed, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api';
 import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home implements OnInit {
+  private platformId = inject(PLATFORM_ID);
+  private router = inject(Router);
 //esto es para los link externos
   protected readonly title = signal('frontend');
   
@@ -53,8 +56,21 @@ export class Home implements OnInit {
     )
   );
 
-  esAdmin() {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  return user.rol === 'ADMIN';
+  esAdmin(): boolean {
+
+    // Solo ejecutamos si estamos en el navegador
+    if (isPlatformBrowser(this.platformId)) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.rol === 'ADMIN';
+    }
+    
+    return false; // Si está en el servidor, por defecto no es admin
+  }
+
+  logout() {
+  if (isPlatformBrowser(this.platformId)) {
+    localStorage.removeItem('user'); // Borramos los datos
+    this.router.navigate(['/login']); // Directo al login
+  }
 }
 }

@@ -17,7 +17,6 @@ public class CodigoVerificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String codigo;
     private LocalDateTime expiracion;
     private boolean usado;
@@ -25,4 +24,25 @@ public class CodigoVerificacion {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Usuario usuario;
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public void setExpiracion(LocalDateTime expiracion) {
+        this.expiracion = expiracion;
+    }
+
+    public void setUsado(boolean usado) {
+        this.usado = usado;
+    }
+
+    public String getCodigo() { return codigo; }
+    public Usuario getUsuario() { return usuario; }
+    public LocalDateTime getExpiracion() { return expiracion; }
+    public boolean isUsado() { return usado; }
 }

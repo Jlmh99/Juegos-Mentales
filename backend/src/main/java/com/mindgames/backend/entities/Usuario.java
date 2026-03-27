@@ -21,9 +21,8 @@ public class Usuario {
     @Column(unique = true)
     private String email;
     private String password;
-    //private String rol;
-
-    //private boolean twoFactorEnabled;
+    private String rol;
+    private boolean twoFactorEnabled;
 
     // getters y setters
 }

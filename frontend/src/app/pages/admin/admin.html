@@ -1,1 +1,23 @@
-<p>admin works!</p>
+<div class="container">
+  <h2>Panel de Administración</h2>
+
+  <h3>Crear Usuario</h3>
+  <input placeholder="Username" [(ngModel)]="nuevoUsuario.username">
+  <input placeholder="Email" [(ngModel)]="nuevoUsuario.email">
+  <input placeholder="Password" [(ngModel)]="nuevoUsuario.password">
+
+  <select [(ngModel)]="nuevoUsuario.rol">
+    <option value="USER">USER</option>
+    <option value="ADMIN">ADMIN</option>
+  </select>
+
+  <button (click)="crear()">Crear</button>
+
+  <hr>
+
+  <h3>Usuarios</h3>
+  <div *ngFor="let u of usuarios">
+    {{ u.username }} - {{ u.email }} - {{ u.rol }}
+    <button (click)="eliminar(u.id)">Eliminar</button>
+  </div>
+</div>

@@ -1,9 +1,10 @@
 <div class="container">
   
-  <div *ngIf="esAdmin()" class="admin-access">
-    <button class="btn-admin">⚙️ Panel Admin</button>
+  <div *ngIf="esAdmin()">
+    <a routerLink="/admin">Ir a Panel Admin</a>
   </div>
-  
+
+  <button (click)="logout()" class="btn-logout">🚪 Cerrar Sesión</button>
   <h1>🧠 Juegos Mentales</h1>
   <p class="subtitle">Explora, aprende y entrena tu mente</p>
 
