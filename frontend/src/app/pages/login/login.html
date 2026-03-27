@@ -6,5 +6,11 @@
 
   <button (click)="iniciarSesion()">Entrar</button>
 
+  <div *ngIf="mostrar2FA">
+    <h3>Verificación 2FA</h3>
+    <input type="text" placeholder="Código" [(ngModel)]="codigo">
+    <button (click)="verificarCodigo()">Verificar</button>
+  </div>
+
   <p>{{ mensaje }}</p>
 </div>

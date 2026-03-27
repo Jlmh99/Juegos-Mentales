@@ -1,5 +1,8 @@
 <div class="container">
   
+  <div *ngIf="esAdmin()" class="admin-access">
+    <button class="btn-admin">⚙️ Panel Admin</button>
+  </div>
   
   <h1>🧠 Juegos Mentales</h1>
   <p class="subtitle">Explora, aprende y entrena tu mente</p>

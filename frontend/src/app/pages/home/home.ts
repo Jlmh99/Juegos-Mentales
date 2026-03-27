@@ -53,5 +53,8 @@ export class Home implements OnInit {
     )
   );
 
-  
+  esAdmin() {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  return user.rol === 'ADMIN';
+}
 }

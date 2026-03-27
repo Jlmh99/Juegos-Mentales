@@ -10,6 +10,7 @@ export class AuthService {
   private api = 'http://localhost:8080/api/test';
   private urlRegister = 'http://localhost:8080/api/auth/register';
   private urlLogin = 'http://localhost:8080/api/auth/login';
+  private urlVerify = 'http://localhost:8080/api/auth/verify';
 
   constructor(private http: HttpClient) {}
 
@@ -34,6 +35,12 @@ export class AuthService {
   login(data: any): Observable<string> {
     return this.http.post(this.urlLogin, data, {
       responseType: 'text' // 👈 Importante porque recibes texto del Backend
+    });
+  }
+
+  verify(data: any): Observable<string> {
+    return this.http.post(this.urlVerify, data, {
+      responseType: 'text' // 👈 Mantiene la consistencia con tus otros métodos
     });
   }
 
