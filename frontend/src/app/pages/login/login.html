@@ -1,0 +1,10 @@
+<div class="container">
+  <h2>Login</h2>
+
+  <input type="email" placeholder="Correo" [(ngModel)]="user.email">
+  <input type="password" placeholder="Contraseña" [(ngModel)]="user.password">
+
+  <button (click)="iniciarSesion()">Entrar</button>
+
+  <p>{{ mensaje }}</p>
+</div>
