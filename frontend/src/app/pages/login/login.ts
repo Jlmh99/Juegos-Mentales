@@ -67,17 +67,17 @@ export class Login {
   }).subscribe((res: any) => {
     
     // 1. Verificamos el mensaje dentro del objeto
-    if (res.mensaje === 'Login correcto' || res === 'Login correcto') {
+    if (res.mensaje === 'Login correcto') {
       
       // 2. ¡CRUCIAL! Guardar en localStorage para que el Guard te deje pasar
       // Si res es string, creamos el objeto manual; si es objeto, lo guardamos tal cual
-      const data = (typeof res === 'object') ? res : { mensaje: res, rol: 'USER', email: this.user.email };
-      localStorage.setItem('user', JSON.stringify(data));
+      localStorage.setItem('user', JSON.stringify(res));
+      console.log('Usuario guardado:', res);
 
       // 3. Ahora sí, el Guard verá los datos y te dejará entrar
       this.router.navigate(['/home']);
     } else {
-      this.mensaje = res.mensaje || res;
+      this.mensaje = res.mensaje;
     }
   });
 }

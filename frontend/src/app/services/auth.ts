@@ -36,9 +36,9 @@ export class AuthService {
     return this.http.post(this.urlLogin, data);
   }
 
-  verify(data: any): Observable<string> {
+  verify(data: any): Observable<any> {
     return this.http.post(this.urlVerify, data, {
-      responseType: 'text' // 👈 Mantiene la consistencia con tus otros métodos
+      
     });
   }
 

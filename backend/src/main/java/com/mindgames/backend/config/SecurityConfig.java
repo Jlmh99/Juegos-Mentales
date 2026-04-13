@@ -28,9 +28,10 @@ public class SecurityConfig {
                 // 2. Permitir explícitamente las peticiones OPTIONS (Preflight)
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/api/users/**").permitAll()
+                .anyRequest().authenticated()//eliminar al implementar JWT
             )
-            .httpBasic(Customizer.withDefaults());
+            .httpBasic(Customizer.withDefaults());//eliminar al implementar JWT
         
         return http.build();
     }
