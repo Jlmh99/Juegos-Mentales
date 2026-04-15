@@ -1,16 +1,50 @@
-<div class="container">
-  <h2>Login</h2>
+<div class="login-wrapper">
+  <div class="card shadow">
+    
+    <div class="login-header">
+      <h2 *ngIf="!mostrar2FA">Bienvenido a <span class="brand">Mind Games</span> 🧠</h2>
+      <h2 *ngIf="mostrar2FA">Casi listo... 🛡️</h2>
+    </div>
 
-  <input type="email" placeholder="Correo" [(ngModel)]="user.email">
-  <input type="password" placeholder="Contraseña" [(ngModel)]="user.password">
+    <div class="form-section" *ngIf="!mostrar2FA">
+      <div class="input-group">
+        <label>Correo Electrónico</label>
+        <input type="email" placeholder="ejemplo@correo.com" [(ngModel)]="user.email">
+      </div>
 
-  <button (click)="iniciarSesion()">Entrar</button>
+      <div class="input-group">
+        <label>Contraseña</label>
+        <input type="password" placeholder="••••••••" [(ngModel)]="user.password">
+      </div>
 
-  <div *ngIf="mostrar2FA">
-    <h3>Verificación 2FA</h3>
-    <input type="text" placeholder="Código" [(ngModel)]="codigo">
-    <button (click)="verificarCodigo()">Verificar</button>
+      <button class="btn-primary" (click)="iniciarSesion()">
+        <span>Entrar</span>
+      </button>
+    </div>
+
+    <div class="form-section 2fa-fade" *ngIf="mostrar2FA">
+      <p class="info-text">Hemos enviado un código de seguridad a tu correo. Por favor, ingrésalo para continuar.</p>
+      
+      <div class="input-group">
+        <input type="text" 
+               class="otp-input" 
+               placeholder="000000" 
+               maxlength="6" 
+               [(ngModel)]="codigo">
+      </div>
+
+      <button class="btn-success" (click)="verificarCodigo()">
+        Verificar Identidad
+      </button>
+      
+      <button class="btn-link" (click)="mostrar2FA = false">
+        Regresar al login
+      </button>
+    </div>
+
+    <div class="message-box" [ngClass]="{'error': mensaje.includes('Error'), 'info': !mensaje.includes('Error')}" *ngIf="mensaje">
+      <p>{{ mensaje }}</p>
+    </div>
+
   </div>
-
-  <p>{{ mensaje }}</p>
 </div>

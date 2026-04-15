@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
+
 
 @Component({
   selector: 'app-admin',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './admin.html'
+  templateUrl: './admin.html',
+  styleUrl: './admin.css'
 })
 export class Admin implements OnInit {
 
-  usuarios: any[] = [];
+  usuarios = signal<any[]>([]);
 
   nuevoUsuario = {
     username: '',
@@ -28,7 +30,7 @@ export class Admin implements OnInit {
 
   cargarUsuarios() {
     this.auth.getUsers().subscribe(data => {
-      this.usuarios = data;
+      this.usuarios.set(data);
     });
   }
 

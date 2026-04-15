@@ -1,0 +1,30 @@
+<div class="container">
+  <h2>🧩 Sudoku</h2>
+  <h3>⏱️ Tiempo: {{ formatoTiempo() }}</h3>
+
+  <div class="board">
+    <div *ngFor="let row of grid; let i = index" class="row">
+
+      <input
+        *ngFor="let cell of row; let j = index"
+        type="number"
+        [(ngModel)]="grid[i][j]"
+        [readonly]="esFija(i,j)"
+        [class.fixed]="esFija(i,j)"
+        [class.error]="esError(i,j)"
+        min="1"
+        max="9"
+      />
+
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button (click)="verificar()">Verificar</button>
+    <button (click)="reiniciar()">Reiniciar</button>
+    <button (click)="generarNuevo()">Nuevo</button>
+    <button (click)="volver()">⬅ Home</button>
+  </div>
+
+  <p class="mensaje">{{ mensaje }}</p>
+</div>

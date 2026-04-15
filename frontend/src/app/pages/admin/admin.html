@@ -1,23 +1,71 @@
-<div class="container">
-  <h2>Panel de Administración</h2>
+<div class="admin-layout">
+  <section class="admin-card">
+    <div class="card-header">
+      <i class="pi pi-user-plus"></i>
+      <h3>Registrar Nuevo Usuario</h3>
+    </div>
+    
+    <div class="form-grid">
+      <div class="input-field">
+        <label>Nombre de Usuario</label>
+        <input type="text" placeholder="Ej. Juanito123" [(ngModel)]="nuevoUsuario.username">
+      </div>
 
-  <h3>Crear Usuario</h3>
-  <input placeholder="Username" [(ngModel)]="nuevoUsuario.username">
-  <input placeholder="Email" [(ngModel)]="nuevoUsuario.email">
-  <input placeholder="Password" [(ngModel)]="nuevoUsuario.password">
+      <div class="input-field">
+        <label>Correo Electrónico</label>
+        <input type="email" placeholder="correo@uteq.edu.mx" [(ngModel)]="nuevoUsuario.email">
+      </div>
 
-  <select [(ngModel)]="nuevoUsuario.rol">
-    <option value="USER">USER</option>
-    <option value="ADMIN">ADMIN</option>
-  </select>
+      <div class="input-field">
+        <label>Contraseña</label>
+        <input type="password" placeholder="••••••••" [(ngModel)]="nuevoUsuario.password">
+      </div>
 
-  <button (click)="crear()">Crear</button>
+      <div class="input-field">
+        <label>Rol de Acceso</label>
+        <select [(ngModel)]="nuevoUsuario.rol">
+          <option value="USER">Usuario Estándar</option>
+          <option value="ADMIN">Administrador</option>
+        </select>
+      </div>
+    </div>
 
-  <hr>
+    <button class="btn-save" (click)="crear()">
+      <i class="pi pi-check"></i> Guardar Usuario
+    </button>
+  </section>
 
-  <h3>Usuarios</h3>
-  <div *ngFor="let u of usuarios">
-    {{ u.username }} - {{ u.email }} - {{ u.rol }}
-    <button (click)="eliminar(u.id)">Eliminar</button>
-  </div>
+  <section class="table-container">
+    <div class="table-header">
+      <h3>Usuarios Registrados</h3>
+      <span class="user-count">{{ usuarios().length }} usuarios en total</span>
+    </div>
+
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <div *ngFor="let user of usuarios()">
+          <td><strong>{{ user.username }}</strong></td>
+          <td>{{ user.email }}</td>
+          <td>
+            <span [ngClass]="{'badge-admin': user.rol === 'ADMIN', 'badge-user': user.rol === 'USER'}">
+              {{ user.rol }}
+            </span>
+          </td>
+          <td class="text-center">
+            <button class="btn-delete" (click)="eliminar(user.id)" title="Eliminar Usuario">
+              <i class="pi pi-trash"></i>
+            </button>
+          </td>
+        </div>
+      </tbody>
+    </table>
+  </section>
 </div>

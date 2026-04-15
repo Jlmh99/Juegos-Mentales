@@ -5,23 +5,31 @@ import { Admin } from './pages/admin/admin'; // El componente que quieres proteg
 import { Home } from './pages/home/home';
 import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
+import { Sudoku } from './pages/sudoku/sudoku';
 
 export const routes: Routes = [
-    // 1. Primero las rutas específicas
-    { path: 'home', component: Home, 
-    canActivate: [authGuard] },
-    { path: 'register', component: Register },
+    // 1. Rutas Públicas
     { path: 'login', component: Login },
-    
-    // 2. Ruta por defecto (cuando la URL está vacía)
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: 'register', component: Register },
+    { path: 'sudoku', component: Sudoku },
 
+    // 2. Rutas Protegidas (Requieren Login)
+    { 
+        path: 'home', 
+        component: Home, 
+        canActivate: [authGuard] 
+    },
+
+    // 3. Rutas de Administración (Requieren Rol ADMIN)
     {
-    path: 'admin',component: Admin,
-    canActivate: [adminGuard]
+        path: 'admin', 
+        component: Admin,
+        canActivate: [authGuard, adminGuard] // 🔥 IMPORTANTE: Pon ambos. 
     },
     
-    // 3. EL COMODÍN SIEMPRE AL FINAL
+    // 4. Redirección inicial
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+
+    // 5. EL COMODÍN SIEMPRE AL FINAL
     { path: '**', redirectTo: 'home' }
-    
 ];

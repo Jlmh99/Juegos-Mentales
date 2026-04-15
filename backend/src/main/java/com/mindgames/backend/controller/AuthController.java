@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mindgames.backend.Repositories.CodigoRepository;
 import com.mindgames.backend.Repositories.UsuarioRepository;
+import com.mindgames.backend.config.JwtUtil;
 import com.mindgames.backend.entities.CodigoVerificacion;
 import com.mindgames.backend.entities.Usuario;
+import com.mindgames.backend.services.EmailService;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,6 +30,16 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder encoder;
+
+    @Autowired
+    private CodigoRepository codigoRepo;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private EmailService emailService; // 👈 Inyectamos el servicio
+
     @PostMapping("/register")
     public String register(@RequestBody Usuario user) {
 
@@ -45,8 +57,7 @@ public class AuthController {
         return "Usuario registrado correctamente";
     }
 
-    @Autowired
-    private CodigoRepository codigoRepo;
+    
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Usuario login) {
@@ -70,13 +81,24 @@ public class AuthController {
 
         codigoRepo.save(c);
 
-        System.out.println("Código 2FA: " + codigo); // simulación
+        // 📧 ENVÍO REAL CON BREVO
+            try {
+                emailService.enviarCodigo(user.getEmail(), codigo);
+                System.out.println("✅ Correo enviado a: " + user.getEmail());
+            } catch (Exception e) {
+                System.err.println("❌ Error enviando correo: " + e.getMessage());
+                return Map.of("mensaje", "Error al enviar el código de verificación");
+            }
 
-        return Map.of("mensaje", "2FA requerido");
+            return Map.of("mensaje", "2FA requerido");
         }
+
+        // 🔥 2. Generar Token para usuarios SIN 2FA
+        String token = jwtUtil.generarToken(user.getEmail(), user.getRol());
         
         return Map.of(
         "mensaje", "Login correcto",
+        "token", token,
         "rol", user.getRol(),
         "email", user.getEmail()
         );
@@ -102,9 +124,13 @@ public class AuthController {
                 c.setUsado(true);
                 codigoRepo.save(c);
 
+                // 🔥 3. Generar Token para usuarios CON 2FA (tras verificar código)
+                String token = jwtUtil.generarToken(user.getEmail(), user.getRol());
+
                 // ✅ Devolvemos un MAPA con el ROL incluido para el Guard
                 return Map.of(
                     "mensaje", "Login correcto",
+                    "token", token,
                     "rol", user.getRol(),
                     "email", user.getEmail()
                 );

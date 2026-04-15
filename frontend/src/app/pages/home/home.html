@@ -1,45 +1,55 @@
-<div class="container">
-  
-  <div *ngIf="esAdmin()">
-    <a routerLink="/admin">Ir a Panel Admin</a>
-  </div>
-
-  <button (click)="logout()" class="btn-logout">🚪 Cerrar Sesión</button>
-  <h1>🧠 Juegos Mentales</h1>
-  <p class="subtitle">Explora, aprende y entrena tu mente</p>
-
-  <div class="menu">
-    <a class="card"
-       href="https://es.wikipedia.org/wiki/Sudoku"
-       target="_blank"
-       rel="noopener">
-      ♟️ ¿Qué es el Sudoku?
-    </a>
-
-    <a class="card"
-       href="https://es.wikipedia.org/wiki/Crucigrama"
-       target="_blank"
-       rel="noopener">
-      🧩 ¿Qué es un Crucigrama?
-    </a>
-  </div>
-
-  <!-- 🔍 Buscador de juegos -->
-  <input
-    type="text"
-    placeholder="Buscar juego..."
-    (input)="searchText.set($any($event.target).value)"
-    class="search"
-  />
-
-  <div class="menu">
-    <div *ngFor="let juego of juegosFiltrados()" class="card">
-      <h3>{{ juego.nombre }}</h3>
-      <p>{{ juego.descripcion }}</p>
+<div class="home-wrapper">
+  <nav class="navbar">
+    <div class="nav-brand">🧠 Mind Games</div>
+    <div class="nav-actions">
+      <button *ngIf="esAdmin()" routerLink="/admin" class="btn-admin">
+        <i class="pi pi-cog"></i> Panel Admin
+      </button>
+      <button (click)="logout()" class="btn-logout">
+        🚪 Cerrar Sesión
+      </button>
     </div>
-  </div>
-  
+  </nav>
 
-  <p>{{ mensajeBackend() }}</p>
-  
+  <div class="main-content">
+    <header class="hero-section">
+      <h1>¡Hola, Jugador!</h1>
+      <p class="subtitle">Explora, aprende y entrena tu mente</p>
+      
+      <div class="search-container">
+        <i class="pi pi-search"></i>
+        <input
+          type="text"
+          placeholder="¿Qué quieres jugar hoy?"
+          (input)="searchText.set($any($event.target).value)"
+          class="search-bar"
+        />
+      </div>
+    </header>
+
+    <section class="games-grid">
+      <div *ngFor="let juego of juegosFiltrados()" class="game-card">
+        <div class="game-info">
+          <h3>{{ juego.nombre }}</h3>
+          <p>{{ juego.descripcion }}</p>
+        </div>
+        <button [routerLink]="['/' + juego.nombre.toLowerCase()]" class="btn-play">
+          ▶️ Jugar ahora
+        </button>
+      </div>
+    </section>
+
+    <footer class="learning-section">
+      <h3>Aprende más</h3>
+      <div class="info-links">
+        <a href="https://es.wikipedia.org/wiki/Sudoku" target="_blank" class="info-card">
+           ♟️ Sudoku
+        </a>
+        <a href="https://es.wikipedia.org/wiki/Crucigrama" target="_blank" class="info-card">
+           🧩 Crucigrama
+        </a>
+      </div>
+      <p class="status-tag">🚀 {{ mensajeBackend() }}</p>
+    </footer>
+  </div>
 </div>

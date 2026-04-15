@@ -1,5 +1,6 @@
 package com.mindgames.backend.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -11,12 +12,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
+     @Autowired
+    private JwtFilter jwtFilter;
+
 
         @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -24,14 +29,21 @@ public class SecurityConfig {
             // 1. EL ORDEN IMPORTA: CORS debe ir antes que cualquier otra cosa
             .cors(Customizer.withDefaults()) 
             .csrf(csrf -> csrf.disable())
+
             .authorizeHttpRequests(auth -> auth
-                // 2. Permitir explícitamente las peticiones OPTIONS (Preflight)
+                // 2. Mantenemos permitir OPTIONS (Preflight) para evitar errores de CORS en Angular
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                
+                // 3. Rutas de Auth siempre libres
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/users/**").permitAll()
-                .anyRequest().authenticated()//eliminar al implementar JWT
+                
+                // 4. NUEVO: Usuarios ahora requiere TOKEN (authenticated)
+                .requestMatchers("/api/users/**").hasRole("ADMIN") // Solo usuarios con rol ADMIN podrán entrar aquí 
+                
+                // 5. El resto de la app protegida
+                .anyRequest().authenticated()
             )
-            .httpBasic(Customizer.withDefaults());//eliminar al implementar JWT
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
     }
@@ -69,4 +81,5 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
