@@ -7,10 +7,10 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  private api = 'http://localhost:8080/api/test';
-  private urlRegister = 'http://localhost:8080/api/auth/register';
-  private urlLogin = 'http://localhost:8080/api/auth/login';
-  private urlVerify = 'http://localhost:8080/api/auth/verify';
+  private api = 'https://juegos-mentales-1jma.onrender.com/api/test';
+  private urlRegister = 'https://juegos-mentales-1jma.onrender.com/api/auth/register';
+  private urlLogin = 'https://juegos-mentales-1jma.onrender.com/api/auth/login';
+  private urlVerify = 'https://juegos-mentales-1jma.onrender.com/api/auth/verify';
 
   constructor(private http: HttpClient) {}
 
@@ -43,19 +43,19 @@ export class AuthService {
   }
 
   getUsers() {
-    return this.http.get<any[]>('http://localhost:8080/api/users');
+    return this.http.get<any[]>('https://juegos-mentales-1jma.onrender.com/api/users');
   }
 
   deleteUser(id: number) {
-    return this.http.delete(`http://localhost:8080/api/users/${id}`);
+    return this.http.delete(`https://juegos-mentales-1jma.onrender.com/api/users/${id}`);
   }
 
   createUser(user: any) {
-    return this.http.post('http://localhost:8080/api/users', user);
+    return this.http.post('https://juegos-mentales-1jma.onrender.com/api/users', user);
   }
 
   updateUser(id: number, user: any) {
-    return this.http.put(`http://localhost:8080/api/users/${id}`, user);
+    return this.http.put(`https://juegos-mentales-1jma.onrender.com/api/users/${id}`, user);
   }
 
 }
