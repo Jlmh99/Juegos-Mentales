@@ -47,7 +47,7 @@ export class AuthService {
   }
 
   deleteUser(id: number) {
-    return this.http.delete(`https://juegos-mentales-1jma.onrender.com/api/users/${id}`);
+    return this.http.delete(`https://juegos-mentales-1jma.onrender.com/api/users/${id}`, { responseType: 'text' });
   }
 
   createUser(user: any) {
