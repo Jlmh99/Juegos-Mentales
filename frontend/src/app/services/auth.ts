@@ -54,4 +54,8 @@ export class AuthService {
     return this.http.post('http://localhost:8080/api/users', user);
   }
 
+  updateUser(id: number, user: any) {
+    return this.http.put(`http://localhost:8080/api/users/${id}`, user);
+  }
+
 }

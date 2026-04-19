@@ -1,11 +1,95 @@
-<div class="container">
-  <h2>Registro</h2>
+<div class="register-wrapper">
+  <div class="card shadow">
 
-  <input type="text" placeholder="Usuario" [(ngModel)]="user.username">
-  <input type="email" placeholder="Correo" [(ngModel)]="user.email">
-  <input type="password" placeholder="Contraseña" [(ngModel)]="user.password">
+    <div class="header">
+      <h2>Crear Cuenta 🧠</h2>
+      <p>Únete a Mind Games</p>
+    </div>
 
-  <button (click)="registrar()">Registrarse</button>
+    <div class="form-section">
 
-  <p>{{ mensaje }}</p>
+      <!-- 👤 USUARIO -->
+      <div class="input-group">
+        <label>Usuario</label>
+        <input 
+          type="text" 
+          placeholder="Tu nombre de usuario"
+          [(ngModel)]="user.username">
+      </div>
+
+      <!-- 📧 EMAIL -->
+      <div class="input-group">
+        <label>Correo Electrónico</label>
+        <input 
+          type="email" 
+          placeholder="ejemplo@correo.com"
+          [(ngModel)]="user.email">
+      </div>
+
+      <!-- 🔐 PASSWORD -->
+      <div class="input-group">
+        <label>Contraseña</label>
+        <div class="password-wrapper">
+          <input 
+            [type]="mostrarPassword ? 'text' : 'password'"
+            placeholder="••••••••"
+            [(ngModel)]="user.password">
+          
+          <button type="button" class="eye-btn" (click)="togglePassword()">
+            {{ mostrarPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- 🔁 CONFIRM PASSWORD -->
+      <div class="input-group">
+        <label>Confirmar Contraseña</label>
+        <div class="password-wrapper">
+          <input 
+            [type]="mostrarPassword ? 'text' : 'password'"
+            placeholder="Repite tu contraseña"
+            [(ngModel)]="confirmPassword">
+
+          <button type="button" class="eye-btn" (click)="togglePassword()">
+            {{ mostrarPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- 🔴 VALIDACIÓN VISUAL OPCIONAL -->
+      <p *ngIf="confirmPassword && user.password !== confirmPassword" style="color:red; font-size:12px;">
+        Las contraseñas no coinciden
+      </p>
+
+      <p *ngIf="confirmPassword && user.password === confirmPassword" style="color:green; font-size:12px;">
+        ✔ Contraseñas coinciden
+      </p>
+
+      <!-- 🚀 BOTÓN -->
+      <button class="btn-primary" (click)="registrar()">
+        Registrarse
+      </button>
+
+      <!-- 🔗 LOGIN -->
+      <div class="login-link">
+        <p>
+          ¿Ya tienes cuenta?
+          <a routerLink="/login">Inicia sesión</a>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- 📢 MENSAJE -->
+    <div 
+      class="message-box" 
+      *ngIf="mensaje"
+      [ngClass]="{
+        'error': mensaje.includes('Error') || mensaje.includes('❌'),
+        'success': mensaje.includes('correctamente')
+      }">
+      {{ mensaje }}
+    </div>
+
+  </div>
 </div>

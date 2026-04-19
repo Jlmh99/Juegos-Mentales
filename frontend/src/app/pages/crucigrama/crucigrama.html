@@ -1,0 +1,60 @@
+<div class="container">
+  <div class="header">
+    <h2>🧩 Crucigrama</h2>
+    <p class="timer">⏱️ Tiempo: <span>{{ formatoTiempo() }}</span></p>
+  </div>
+
+  <div class="grid-card">
+    <div class="grid">
+      <div *ngFor="let fila of tablero(); let i = index" class="row">
+        <ng-container *ngFor="let celda of fila; let j = index">
+          <input 
+            *ngIf="celda !== null"
+            maxlength="1"
+            [(ngModel)]="tablero()[i][j]"
+            [ngClass]="{'error': esError(i,j)}"
+            class="cell"
+          />
+          <div *ngIf="celda === null" class="block"></div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+    <div class="clues-container">
+    <div class="clues-column">
+        <h3>Horizontal</h3>
+        <ul>
+        <li *ngFor="let s of pistasHorizontales()">
+            <strong>({{ s.palabra.length }} letras):</strong> {{ s.pista }}
+        </li>
+        </ul>
+    </div>
+
+    <div class="clues-column">
+        <h3>Vertical</h3>
+        <ul>
+        <li *ngFor="let s of pistasVerticales()">
+            <strong>({{ s.palabra.length }} letras):</strong> {{ s.pista }}
+        </li>
+        </ul>
+    </div>
+    </div>
+
+  <div class="button-group action-group">
+    <button class="btn btn-check" (click)="verificar()">
+      <i class="pi pi-check-circle"></i> Verificar
+    </button>
+    <button class="btn btn-new" (click)="generarNuevo()">
+      <i class="pi pi-refresh"></i> Nuevo Crucigrama
+    </button>
+  </div>
+
+  <p class="mensaje" [class.show]="mensaje()">{{ mensaje() }}</p>
+
+  <div class="button-group navigation-group">
+    <button class="btn btn-back" (click)="volver()">
+      ⬅ Volver al Menú
+    </button>
+  </div>
+</div>

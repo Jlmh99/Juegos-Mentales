@@ -1,0 +1,171 @@
+.container {
+  max-width: 600px;
+  margin: 20px auto;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f9f9f9;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.header h2 {
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.timer {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+.timer span {
+  color: #d9534f;
+  font-family: monospace;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Contenedor del tablero */
+.grid-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  display: inline-block;
+  border: 2px solid #eee;
+  margin: 20px 0;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 42px;
+  height: 42px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 1px;
+  border: 1px solid #bbb;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+
+.cell:focus {
+  outline: none;
+  border-color: #3a3aff;
+  box-shadow: inset 0 0 5px rgba(58, 58, 255, 0.3);
+}
+
+.cell.error {
+  border: 2px solid #e74c3c;
+  background: #ffd6d6;
+  color: #e74c3c;
+}
+
+.block {
+  width: 42px;
+  height: 42px;
+  background: #2c3e50;
+  margin: 1px;
+  border-radius: 2px;
+}
+
+/* Estilo Base de Botones */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-check {
+  background: #3a3aff;
+  color: white;
+}
+
+.btn-check:hover { background: #2a2aff; }
+
+.btn-new {
+  background: #28a745;
+  color: white;
+}
+
+.btn-new:hover { background: #218838; }
+
+.btn-back {
+  background: #6c757d;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.btn-back:hover { background: #5a6268; }
+
+.mensaje {
+  min-height: 24px;
+  margin: 15px 0;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.clues-container {
+  display: flex;
+  justify-content: space-around;
+  background: #ffffff;
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  gap: 20px;
+}
+
+.clues-column {
+  flex: 1;
+}
+
+.clues-column h3 {
+  color: #3a3aff;
+  border-bottom: 2px solid #3a3aff;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.clues-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.clues-column li {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.4;
+}
+
+.clues-column li strong {
+  color: #2c3e50;
+}

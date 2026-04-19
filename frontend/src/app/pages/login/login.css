@@ -121,5 +121,20 @@ button {
   font-size: 0.9rem;
 }
 
+.register-link {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.register-link a {
+  color: #3a3aff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
 .error { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
 .info { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }

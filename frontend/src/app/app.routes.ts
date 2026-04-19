@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { adminGuard } from './guards/admin-guard';
 import { authGuard } from './guards/auth-guard';
 import { Admin } from './pages/admin/admin'; // El componente que quieres proteger
+import { Crucigrama } from './pages/crucigrama/crucigrama';
 import { Home } from './pages/home/home';
 import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
@@ -12,6 +13,7 @@ export const routes: Routes = [
     { path: 'login', component: Login },
     { path: 'register', component: Register },
     { path: 'sudoku', component: Sudoku },
+    { path: 'crucigrama', component: Crucigrama },
 
     // 2. Rutas Protegidas (Requieren Login)
     { 
