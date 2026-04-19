@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class ApiService {
 
-  private url = 'http://localhost:8080/api';
+  private url = 'https://juegos-mentales-1jma.onrender.com/api';
 
   constructor(private http: HttpClient) {}
 

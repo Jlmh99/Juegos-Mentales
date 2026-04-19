@@ -52,7 +52,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
+        config.setAllowedOrigins(java.util.List.of("http://localhost:4200",
+            "https://mind-games-frontend.onrender.com"
+        ));
         config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // Permitir explícitamente Authorization
         config.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "Accept"));
