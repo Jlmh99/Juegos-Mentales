@@ -44,10 +44,16 @@ export class Admin implements OnInit {
   }
 
   eliminar(id: number) {
-    this.auth.deleteUser(id).subscribe(() => {
-      this.cargarUsuarios();
-    });
-  }
+  this.auth.deleteUser(id).subscribe({
+    next: () => {
+      // Actualiza la lista localmente sin esperar al servidor
+      this.usuarios.set(this.usuarios().filter(u => u.id !== id));
+    },
+    error: (err) => {
+      console.error('Error al eliminar usuario:', err);
+    }
+  });
+}
 
   crear() {
     this.auth.createUser(this.nuevoUsuario).subscribe(() => {
