@@ -50,11 +50,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 // 🔑 ¡ESTO ES LO MÁS IMPORTANTE!
                 // Le decimos a Spring: "Este usuario es legal, dale acceso"
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                    
-                    // aquí puedes cargar usuario si quieres después
-                    System.out.println("Usuario autenticado: " + email + " con rol: " + rol);
-                }
+                // SEGURIDAD: no se registra el correo, el rol ni el token en los logs.
             }
+        }
 
         filterChain.doFilter(request, response);
     }

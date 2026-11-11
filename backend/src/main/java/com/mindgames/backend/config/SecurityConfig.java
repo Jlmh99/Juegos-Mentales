@@ -5,8 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,9 +34,18 @@ public class SecurityConfig {
                 
                 // 3. Rutas de Auth siempre libres
                 .requestMatchers("/api/auth/**").permitAll()
-                
-                // 4. NUEVO: Usuarios ahora requiere TOKEN (authenticated)
-                .requestMatchers("/api/users/**").hasRole("ADMIN") // Solo usuarios con rol ADMIN podrán entrar aquí 
+
+                // 3.1 Formulario de Ayuda y Soporte del footer: público (con o sin sesión)
+                .requestMatchers("/api/soporte/**").permitAll()
+
+                // 4. NUEVO: Cada usuario autenticado puede ver/editar SU PROPIO perfil
+                //    (debe ir ANTES que la regla de ADMIN de abajo, más específica primero)
+                //    Se incluye la ruta exacta "/api/users/me" porque "/**" no siempre
+                //    cubre la ruta base sin segmento adicional.
+                .requestMatchers("/api/users/me", "/api/users/me/**").authenticated()
+
+                // 5. El resto de /api/users requiere rol ADMIN (gestión de todos los usuarios)
+                .requestMatchers("/api/users/**").hasRole("ADMIN") // Solo usuarios con rol ADMIN podrán entrar aquí
                 
                 // 5. El resto de la app protegida
                 .anyRequest().authenticated()
@@ -55,7 +62,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(java.util.List.of("http://localhost:4200",
             "https://mind-games-frontend.onrender.com"
         ));
-        config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         // Permitir explícitamente Authorization
         config.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "Accept"));
         config.setAllowCredentials(true);
@@ -65,16 +72,15 @@ public class SecurityConfig {
         return source;
     }
 
+    /**
+     * La autenticación real es con JWT (JwtFilter) contra la tabla de usuarios.
+     * Este bean existe solo para que Spring Boot NO cree su usuario por defecto
+     * (que imprimiría una contraseña generada en el log). Está vacío a propósito:
+     * no hay usuarios en memoria ni contraseñas escritas en el código.
+     */
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        // Aquí creamos el usuario "user" con la contraseña "admin123" encriptada
-        UserDetails user = User.builder()
-                .username("user")
-                .password(encoder.encode("admin321")) // 👈 IMPORTANTE: Se encripta aquí
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user);
+    public UserDetailsService userDetailsService() {
+        return new InMemoryUserDetailsManager();
     }
 
     

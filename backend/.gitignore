@@ -1,5 +1,8 @@
 HELP.md
 target/
+
+# Secretos locales (nunca subir): ver application.properties (spring.config.import)
+src/main/resources/application-secrets.properties
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

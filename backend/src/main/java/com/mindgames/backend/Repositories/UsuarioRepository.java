@@ -1,5 +1,6 @@
 package com.mindgames.backend.Repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
      * si el correo no está en la base de datos.
      */
     Optional<Usuario> findByEmail(String email);
+
+    /** Usuarios habilitados con un rol dado (se usa para listar los AGENTE disponibles). */
+    List<Usuario> findByRolAndHabilitadoTrue(String rol);
 }

@@ -1,0 +1,7 @@
+# No copiar a la imagen de Docker: secretos locales ni archivos de compilación.
+src/main/resources/application-secrets.properties
+target/
+pruebas/
+.idea/
+.vscode/
+*.env

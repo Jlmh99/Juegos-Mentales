@@ -1,8 +1,10 @@
 package com.mindgames.backend.config;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
@@ -12,8 +14,13 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "mi_clave_secreta_super_segura_123456";
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    // La clave de firma se construye con el secreto de la configuración
+    // (variable de entorno JWT_SECRET). Nunca se escribe en el código ni se imprime.
+    private final Key key;
+
+    public JwtUtil(@Value("${jwt.secret}") String secreto) {
+        this.key = Keys.hmacShaKeyFor(secreto.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generarToken(String email, String rol) {
         return Jwts.builder()

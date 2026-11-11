@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,8 @@ import com.mindgames.backend.services.EmailService;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final UsuarioRepository repo;
 
@@ -69,6 +73,11 @@ public class AuthController {
         if (!encoder.matches(login.getPassword(), user.getPassword()))
         return Map.of("mensaje", "Contraseña incorrecta");
 
+        // 🚫 Cuenta deshabilitada por un administrador: no puede iniciar sesión
+        if (!user.isHabilitado()) {
+            return Map.of("mensaje", "Tu cuenta está deshabilitada. Contacta a un administrador.");
+        }
+
         // 🔐 SI TIENE 2FA (Bloque integrado exactamente como lo pediste)
     if (user.isTwoFactorEnabled()) {
         String codigo = String.valueOf((int)(Math.random()*900000)+100000);
@@ -84,9 +93,9 @@ public class AuthController {
         // 📧 ENVÍO REAL CON BREVO
             try {
                 emailService.enviarCodigo(user.getEmail(), codigo);
-                System.out.println("✅ Correo enviado a: " + user.getEmail());
             } catch (Exception e) {
-                System.err.println("❌ Error enviando correo: " + e.getMessage());
+                // Sin correo, código ni detalle de la excepción en el log.
+                log.warn("Fallo al solicitar el envío del código 2FA ({})", e.getClass().getSimpleName());
                 return Map.of("mensaje", "Error al enviar el código de verificación");
             }
 
@@ -112,6 +121,10 @@ public class AuthController {
         Usuario user = repo.findByEmail(email).orElse(null);
 
         if (user == null) return Map.of("mensaje", "Usuario no encontrado");
+
+        if (!user.isHabilitado()) {
+            return Map.of("mensaje", "Tu cuenta está deshabilitada. Contacta a un administrador.");
+        }
 
         List<CodigoVerificacion> codigos = codigoRepo.findAll();
 
