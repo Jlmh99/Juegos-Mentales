@@ -141,6 +141,8 @@ echo "$CUERPO" | grep -q '"contenido"' && esperar "Listado sin \"contenido\"" "s
                                        || esperar "Listado sin \"contenido\"" "sin contenido" "sin contenido"
 echo "$CUERPO" | grep -qE "\"id\":$MID_PNG,\"incidenciaId\":[0-9]+,\"emisor\":\{[^}]*\},\"texto\":\"[^\"]*\",\"canal\":\"PUBLICO\",\"fecha\":\"[^\"]*\",\"tieneAdjunto\":true" && esperar "Listado marca tieneAdjunto" si si || esperar "Listado marca tieneAdjunto" si no
 echo "$CUERPO" | grep -q '"tamano":70' && esperar "Listado trae el tamaño real del PNG (70 bytes)" si si || esperar "Listado trae el tamaño real del PNG (70 bytes)" si no
+# Fase 6b: el tamaño sale de la columna adjunto_tamano (calculada al enviar), no del Base64.
+echo "$CUERPO" | grep -q '"nombre":"r.pdf","tipo":"application/pdf","tamano":15}' && esperar "Listado trae el tamaño real del PDF (15 bytes)" si si || esperar "Listado trae el tamaño real del PDF (15 bytes)" si no
 
 descargar "$M/$MID_PNG/adjunto" "$TA"; esperar "Creador baja adjunto PUBLICO" 200 "$CODIGO"
 esperar "Content-Type del adjunto" image/png "$TIPO"

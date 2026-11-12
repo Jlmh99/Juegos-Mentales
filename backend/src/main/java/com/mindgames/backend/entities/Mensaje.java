@@ -68,6 +68,13 @@ public class Mensaje {
     @ToString.Exclude
     private String adjuntoContenido;
 
+    // Bytes reales del archivo (ya decodificado). Se calcula una sola vez al guardar
+    // (MensajeService.aplicarAdjunto) para que el listado del chat NO tenga que leer
+    // adjuntoContenido (Práctica 12, Fase 6b). Null en mensajes anteriores a esta
+    // columna hasta correr pruebas/backfill_adjunto_tamano.sql.
+    // La columna adjunto_tamano (BIGINT, nullable) la crea Hibernate (ddl-auto=update).
+    private Long adjuntoTamano;
+
     @PrePersist
     void alCrear() {
         fecha = LocalDateTime.now();

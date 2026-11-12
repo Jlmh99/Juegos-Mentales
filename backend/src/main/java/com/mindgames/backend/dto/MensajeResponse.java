@@ -14,21 +14,23 @@ public record MensajeResponse(Long id, Long incidenciaId, UsuarioResumen emisor,
                               CanalMensaje canal, LocalDateTime fecha,
                               boolean tieneAdjunto, AdjuntoInfo adjunto) {
 
-    /** Desde la entidad (respuesta del POST): el contenido ya está en memoria. */
+    // Un mensaje tiene adjunto si tiene nombre de adjunto: aplicarAdjunto() siempre
+    // guarda nombre, tipo, contenido y tamaño juntos (el nombre nunca queda vacío).
+
+    /** Desde la entidad (respuesta del POST). */
     public static MensajeResponse de(Mensaje m) {
-        String c = m.getAdjuntoContenido();
-        AdjuntoInfo adjunto = c == null ? null
+        AdjuntoInfo adjunto = m.getAdjuntoNombre() == null ? null
                 : new AdjuntoInfo(m.getAdjuntoNombre(), m.getAdjuntoTipo(),
-                        AdjuntoInfo.tamanoDesdeBase64(c.length(), c.substring(Math.max(0, c.length() - 2))));
+                        AdjuntoInfo.tamanoOCero(m.getAdjuntoTamano()));
         return new MensajeResponse(m.getId(), m.getIncidencia().getId(), UsuarioResumen.de(m.getEmisor()),
                 m.getTexto(), m.getCanal(), m.getFecha(), adjunto != null, adjunto);
     }
 
-    /** Desde la fila del listado (sin contenido). */
+    /** Desde la fila del listado (sin contenido). tamano = 0 si el mensaje es antiguo y no tiene backfill. */
     public static MensajeResponse de(MensajeFila f) {
-        AdjuntoInfo adjunto = f.adjuntoLargo() == null ? null
+        AdjuntoInfo adjunto = f.adjuntoNombre() == null ? null
                 : new AdjuntoInfo(f.adjuntoNombre(), f.adjuntoTipo(),
-                        AdjuntoInfo.tamanoDesdeBase64(f.adjuntoLargo(), f.adjuntoUltimos()));
+                        AdjuntoInfo.tamanoOCero(f.adjuntoTamano()));
         UsuarioResumen emisor = new UsuarioResumen(f.emisorId(), f.emisorUsername(), f.emisorEmail(), f.emisorRol());
         return new MensajeResponse(f.id(), f.incidenciaId(), emisor, f.texto(), f.canal(), f.fecha(),
                 adjunto != null, adjunto);

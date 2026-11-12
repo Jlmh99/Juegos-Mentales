@@ -153,6 +153,7 @@ public class MensajeService {
         m.setAdjuntoNombre(limpiarNombre(adjunto.nombre()));
         m.setAdjuntoTipo(tipo);
         m.setAdjuntoContenido(Base64.getEncoder().encodeToString(bytes)); // Base64 limpio
+        m.setAdjuntoTamano((long) bytes.length); // tamaño real, una sola vez (Fase 6b)
     }
 
     /** Revisa los primeros bytes ("firma") del archivo. */
