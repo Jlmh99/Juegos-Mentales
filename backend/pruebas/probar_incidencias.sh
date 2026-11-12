@@ -101,8 +101,9 @@ PNG='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e
 PDF=$(printf '%%PDF-1.4\n%%%%EOF\n' | base64 -w0)
 M="/api/incidencias/$ID_A/mensajes"
 peticion POST "$M" "$TA" '{"texto":"Hola, sigue sin cargar"}'; esperar "Creador escribe (PUBLICO por defecto)" 201 "$CODIGO"
+MID_TEXTO=$(campo id)
 peticion POST "$M" "$TA" "{\"texto\":\"Captura\",\"adjunto\":{\"nombre\":\"captura.png\",\"tipo\":\"image/png\",\"contenido\":\"$PNG\"}}"
-esperar "Mensaje con adjunto PNG" 201 "$CODIGO"
+esperar "Mensaje con adjunto PNG" 201 "$CODIGO"; MID_PNG=$(campo id)
 peticion POST "$M" "$TAG" "{\"texto\":\"Reporte\",\"adjunto\":{\"nombre\":\"r.pdf\",\"tipo\":\"application/pdf\",\"contenido\":\"$PDF\"}}"
 esperar "Mensaje con adjunto PDF" 201 "$CODIGO"
 peticion POST "$M" "$TA" '{"texto":"Quiero ver lo interno","canal":"INTERNO"}'; esperar "Creador escribe en INTERNO" 403 "$CODIGO"
@@ -121,6 +122,37 @@ esperar "PDF disfrazado de PNG" 400 "$CODIGO"
 { printf '{"texto":"grande","adjunto":{"nombre":"g.png","tipo":"image/png","contenido":"'
   { printf '\x89PNG\r\n\x1a\n'; head -c 2200000 /dev/zero; } | base64 -w0; printf '"}}'; } > "$CUERPO_TMP.grande"
 peticion POST "$M" "$TA" "@$CUERPO_TMP.grande"; esperar "Adjunto de más de 2 MB" 400 "$CODIGO"
+
+echo "== 8b. Adjuntos fuera del listado (Práctica 12)"
+# descargar RUTA TOKEN -> deja $CODIGO, $TIPO (Content-Type) y el archivo en $CUERPO_TMP.bin
+descargar() {
+  local args=(-s -o "$CUERPO_TMP.bin" -D "$CUERPO_TMP.cab" -w "%{http_code}" "$BASE$1")
+  [ -n "$2" ] && args+=(-H "Authorization: Bearer $2")
+  CODIGO=$(curl "${args[@]}")
+  TIPO=$(tr -d '\r' < "$CUERPO_TMP.cab" | sed -nE 's/^[Cc]ontent-[Tt]ype: *([^;]*).*/\1/p' | tail -1)
+}
+peticion POST "$M" "$TAG" "{\"texto\":\"Captura interna\",\"canal\":\"INTERNO\",\"adjunto\":{\"nombre\":\"i.png\",\"tipo\":\"image/png\",\"contenido\":\"$PNG\"}}"
+esperar "Agente escribe en INTERNO con adjunto" 201 "$CODIGO"; MID_INTERNO=$(campo id)
+peticion POST "/api/incidencias/$ID_B/mensajes" "$TB" "{\"texto\":\"De B\",\"adjunto\":{\"nombre\":\"b.png\",\"tipo\":\"image/png\",\"contenido\":\"$PNG\"}}"
+esperar "B escribe en su incidencia con adjunto" 201 "$CODIGO"; MID_DE_B=$(campo id)
+
+peticion GET "$M" "$TA"
+echo "$CUERPO" | grep -q '"contenido"' && esperar "Listado sin \"contenido\"" "sin contenido" "con contenido" \
+                                       || esperar "Listado sin \"contenido\"" "sin contenido" "sin contenido"
+echo "$CUERPO" | grep -qE "\"id\":$MID_PNG,\"incidenciaId\":[0-9]+,\"emisor\":\{[^}]*\},\"texto\":\"[^\"]*\",\"canal\":\"PUBLICO\",\"fecha\":\"[^\"]*\",\"tieneAdjunto\":true" && esperar "Listado marca tieneAdjunto" si si || esperar "Listado marca tieneAdjunto" si no
+echo "$CUERPO" | grep -q '"tamano":70' && esperar "Listado trae el tamaño real del PNG (70 bytes)" si si || esperar "Listado trae el tamaño real del PNG (70 bytes)" si no
+
+descargar "$M/$MID_PNG/adjunto" "$TA"; esperar "Creador baja adjunto PUBLICO" 200 "$CODIGO"
+esperar "Content-Type del adjunto" image/png "$TIPO"
+cmp -s "$CUERPO_TMP.bin" <(printf '%s' "$PNG" | base64 -d) && esperar "Bytes iguales al PNG enviado" si si || esperar "Bytes iguales al PNG enviado" si no
+descargar "$M/$MID_INTERNO/adjunto" "$TA"; esperar "Creador baja adjunto INTERNO" 403 "$CODIGO"
+descargar "$M/$MID_INTERNO/adjunto" "$TAG"; esperar "Agente asignado baja adjunto INTERNO" 200 "$CODIGO"
+descargar "$M/$MID_PNG/adjunto" "$TB"; esperar "Otro usuario baja adjunto ajeno" 403 "$CODIGO"
+descargar "$M/$MID_DE_B/adjunto" "$TA"; esperar "mid de otra incidencia" 404 "$CODIGO"
+descargar "$M/$MID_DE_B/adjunto" "$TAD"; esperar "mid de otra incidencia (ADMIN)" 404 "$CODIGO"
+descargar "$M/$MID_TEXTO/adjunto" "$TA"; esperar "Mensaje sin adjunto" 404 "$CODIGO"
+descargar "$M/999999999/adjunto" "$TA"; esperar "Mensaje inexistente" 404 "$CODIGO"
+descargar "$M/$MID_PNG/adjunto" ""; esperar "Adjunto sin token" 403 "$CODIGO"
 
 echo "== 9. Borrado"
 peticion DELETE "/api/incidencias/$ID_A" "$TAG"; esperar "Agente borra" 403 "$CODIGO"

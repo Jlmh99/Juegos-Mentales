@@ -28,6 +28,11 @@ public class ErrorApi extends RuntimeException {
         return new ErrorApi(HttpStatus.NOT_FOUND, "Incidencia no encontrada");
     }
 
+    /** 404 para un adjunto: el mensaje no existe, es de otra incidencia o no tiene archivo. */
+    public static ErrorApi adjuntoNoEncontrado() {
+        return new ErrorApi(HttpStatus.NOT_FOUND, "Adjunto no encontrado");
+    }
+
     public static ErrorApi datosInvalidos(String mensaje) {
         return new ErrorApi(HttpStatus.BAD_REQUEST, mensaje);
     }

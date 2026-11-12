@@ -51,8 +51,37 @@ public class MensajeService {
         Incidencia inc = incidencias.buscar(incidenciaId);
         CanalMensaje c = canal == null ? CanalMensaje.PUBLICO : canal;
         verificarAcceso(inc, yo, c);
-        return repo.findByIncidenciaAndCanalOrderByFechaAscIdAsc(inc, c).stream()
+        // Sin el Base64 de los adjuntos: se descargan aparte con adjunto() (Práctica 12).
+        return repo.listarSinContenido(inc, c).stream()
                 .map(MensajeResponse::de).toList();
+    }
+
+    /** Archivo adjunto ya decodificado, listo para enviarse como binario. */
+    public record ArchivoAdjunto(String nombre, String tipo, byte[] bytes) {
+    }
+
+    /**
+     * GET /api/incidencias/{id}/mensajes/{mid}/adjunto con los mismos permisos que el listado:
+     *  1. la incidencia debe existir (404) y el usuario debe poder verla (403);
+     *  2. el mensaje debe pertenecer a ESA incidencia (si no, 404: evita pedir el {mid} de otra);
+     *  3. se valida el canal REAL guardado en el mensaje, nunca uno que mande el cliente
+     *     (un USER no puede bajar adjuntos del canal INTERNO: 403);
+     *  4. el mensaje debe tener adjunto (404).
+     */
+    @Transactional(readOnly = true)
+    public ArchivoAdjunto adjunto(Long incidenciaId, Long mensajeId, String email) {
+        Usuario yo = incidencias.usuarioAutenticado(email);
+        Incidencia inc = incidencias.buscar(incidenciaId);
+        if (!incidencias.puedeVer(inc, yo)) throw ErrorApi.prohibido();
+
+        Mensaje m = repo.findById(mensajeId)
+                .filter(x -> x.getIncidencia().getId().equals(inc.getId()))
+                .orElseThrow(ErrorApi::adjuntoNoEncontrado);
+        verificarAcceso(inc, yo, m.getCanal());
+        if (m.getAdjuntoContenido() == null) throw ErrorApi.adjuntoNoEncontrado();
+
+        return new ArchivoAdjunto(m.getAdjuntoNombre(), m.getAdjuntoTipo(),
+                Base64.getDecoder().decode(m.getAdjuntoContenido()));
     }
 
     @Transactional
